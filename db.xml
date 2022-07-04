@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<resultset statement="SELECT * FROM mfourdb.users
+LIMIT 0, 1000
+"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<row>
+		<field name="id">1</field>
+		<field name="first_name">Collin</field>
+		<field name="last_name">Duddy</field>
+		<field name="email">collin.duddy@gmail.com</field>
+	</row>
+</resultset>

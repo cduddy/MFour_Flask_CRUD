@@ -1,0 +1,175 @@
+Payload examples:
+
+Testing users/:
+		Test 1: SUCCESS: All entries were retrieved in dictionary form
+			curl -X GET http://localhost:5000/users/
+			Expected output: {"1":["Collin","Duddy","collin.duddy@gmail.com"]}
+
+Testing users/create:
+	Using FORM:
+		Test 1: SUCCESS: All fields provided in correct format
+			curl -X POST http://localhost:5000/users/create -F "first_name=Max" -F "last_name=Mayfield" -F "email=mmayfield@hawkins.edu"
+			Expected output: "User was successfully added!"
+			
+		Test 2: FAILURE:  No first name provided
+			curl -X POST http://localhost:5000/users/create -F "last_name=lname" -F "email=tempe@mail.com"
+			Expected output: "No first name provided!"
+			
+		Test 3: FAILURE:  No last name provided
+			curl -X POST http://localhost:5000/users/create -F "first_name=fname" -F "email=tempe@mail.com"
+			Expected output: "No last name provided!"		
+			
+		Test 4: FAILURE:  No email provided
+			curl -X POST http://localhost:5000/users/create -F "first_name=fname" -F "last_name=lname" 
+			Expected output: "No email provided!"		
+			
+		Test 5: FAILURE:  Invalid email provided. (E-mail is malformed with no '@' syymbol)
+			curl -X POST http://localhost:5000/users/create -F "first_name=fname" -F "last_name=lname" -F "email=tempemail.com"
+			Expected output: "E-mail is invalid!"		
+		
+		Test 6: FAILURE:  Invalid email provided. (E-mail is malformed with no '.' syymbol)
+			curl -X POST http://localhost:5000/users/create -F "first_name=fname" -F "last_name=lname" -F "email=tempe@mailcom"
+			Expected output: "E-mail is invalid!"
+		
+		Test 7: FAILURE:  Account already exists with the email address (E-mail is not unique)
+			curl -X POST http://localhost:5000/users/create -F "first_name=fname" -F "last_name=lname" -F "email=collin.duddy@gmail.com"
+			Expected output: "An entry for this e-mail already exists!"			
+	
+	Using JSON:
+		Test 1: SUCCESS: All fields provided in correct format
+			curl -X POST http://localhost:5000/users/create -H "Content-Type:application/json" -d "{\"first_name\":\"Will\",\"last_name\":\"Byers\",\"email\":\"wbyers@hawkins.net\"}"
+			Expected output: "User was successfully added!"
+			
+		Test 2: FAILURE:  No first name provided
+			curl -X POST http://localhost:5000/users/create -H "Content-Type:application/json" -d "{\"last_name\":\"Byers\",\"email\":\"wbyers@hawkins.net\"}"
+			Expected output: "No first name provided!"
+			
+		Test 3: FAILURE:  No last name provided
+			curl -X POST http://localhost:5000/users/create -H "Content-Type:application/json" -d "{\"first_name\":\"Will\",\"email\":\"wbyers@hawkins.net\"}"
+			Expected output: "No last name provided!"		
+			
+		Test 4: FAILURE:  No email provided
+			curl -X POST http://localhost:5000/users/create -H "Content-Type:application/json" -d "{\"first_name\":\"Will\",\"last_name\":\"Byers\"}"
+			Expected output: "No email provided!"		
+			
+		Test 5: FAILURE:  Invalid email provided. (E-mail is malformed with no '@' syymbol)
+			curl -X POST http://localhost:5000/users/create -H "Content-Type:application/json" -d "{\"first_name\":\"Will\",\"last_name\":\"Byers\",\"email\":\"wbyershawkins.net\"}"
+			Expected output: "E-mail is invalid!"		
+		
+		Test 6: FAILURE:  Invalid email provided. (E-mail is malformed with no '.' syymbol)
+			curl -X POST http://localhost:5000/users/create -H "Content-Type:application/json" -d "{\"first_name\":\"Will\",\"last_name\":\"Byers\",\"email\":\"wbyers@hawkinsnet\"}"
+			Expected output: "E-mail is invalid!"
+		
+		Test 7: FAILURE:  Account already exists with the email address (E-mail is not unique)
+			curl -X POST http://localhost:5000/users/create -H "Content-Type:application/json" -d "{\"first_name\":\"fname\",\"last_name\":\"lname\",\"email\":\"collin.duddy@gmail.com\"}"
+			Expected output: "An entry for this e-mail already exists!"		
+			
+Testing users/update/{id}:
+	Using FORM:
+		Test 1: SUCCESS: Only first name was updated
+			curl -X POST http://localhost:5000/users/update/1 -F "first_name=jonathan"
+			Expected output: "User was successfully updated!"
+			
+		Test 2: SUCCESS: Only last name was updated
+			curl -X POST http://localhost:5000/users/update/1 -F "last_name=byers"
+			Expected output: "User was successfully updated!"
+		
+		Test 3: SUCCESS: Only email was updated
+			curl -X POST http://localhost:5000/users/update/1 -F "email=jbyers@hawkins.com"
+			Expected output: "User was successfully updated!"
+		
+		Test 4: SUCCESS: First and Last Name updated
+			curl -X POST http://localhost:5000/users/update/1 -F "first_name=mike" -F "last_name=wheeler"
+			Expected output: "User was successfully updated!"	
+		
+		Test 5: SUCCESS: All entries updated
+			curl -X POST http://localhost:5000/users/update/1 -F "first_name=Steve" -F "last_name=Harrington" -F "email=steve@gmail.com"
+			Expected output: "User was successfully updated!"	
+			
+		Test 6: FAILURE: An invalid field was provided
+			curl -X POST http://localhost:5000/users/update/1 -F "value=jbyers@hawkins.com"
+			An invalid field was provided!
+			
+		Test 7: FAILURE: An invalid value was provided for the field. (Email with no @)
+			curl -X POST http://localhost:5000/users/update/1 -F "email=jbyershawkins.com"
+			Expected output: "An invalid value for the specified field was provided."
+			
+		Test 8: FAILURE: An invalid value was provided for the field. (Email with no .)
+			curl -X POST http://localhost:5000/users/update/1 -F "email=jbyers@hawkinscom"
+			Expected output: "An invalid value for the specified field was provided."			
+			
+		Test 9: FAILURE: No value was provided
+			curl -X POST http://localhost:5000/users/update/1 -F "email="
+			Expected output: "An invalid value for the specified field was provided"
+			
+		Test 10: FAILURE: An invalid field was provided
+			curl -X POST http://localhost:5000/users/update/1 -F "=fname"
+			Expected output: "An invalid field was provided!"
+		
+		Test 11: FAILURE: An invalid value anywhere in the command results in a failure and no updates made
+			curl -X POST http://localhost:5000/users/update/1 -F "first_name=Lucas" -F "last_name=Sinclair" -F "email=lsinclairgmail.com"
+			Expected output: "An invalid value for the specified field was provided."
+		
+		Test 12: FAILURE: An invalid field anywhere in the command results in a failure and no updates made
+			curl -X POST http://localhost:5000/users/update/1 -F "first_name=Lucas" -F "lname=Sinclair" -F "email=lsinclair@gmail.com"
+			Expected output: "An invalid field was provided!"
+			
+		Test 13: FAILURE: An invalid user ID results in no updates
+			curl -X POST http://localhost:5000/users/update/17 -F "first_name=Lucas" -F "last_name=Sinclair" -F "email=lsinclair@gmail.com"
+			Expected output: "User ID provided does not match any user within the database."
+			
+		
+	Using JSON:
+		Test 1: SUCCESS: First Name was updated
+			curl -X POST http://localhost:5000/users/update/1 -H "Content-Type:application/json" -d "{\"first_name\":\"Jim\"}"
+			Expected output: "User was successfully updated!"
+			
+		Test 2: SUCCESS: Last Name was updated
+			curl -X POST http://localhost:5000/users/update/1 -H "Content-Type:application/json" -d "{\"last_name\":\"Hopper\"}"
+			Expected output: "User was successfully updated!"
+		
+		Test 3: SUCCESS: Email was updated
+			curl -X POST http://localhost:5000/users/update/1 -H "Content-Type:application/json" -d "{\"email\":\"jhopper@hawkinspd.gov\"}"
+			Expected output: "User was successfully updated!"
+			
+		Test 4: SUCCESS: First and Last Name updated
+			curl -X POST http://localhost:5000/users/update/1 -H "Content-Type:application/json" -d "{\"first_name\":\"Mike\",\"last_name\":\"Wheeler\"}"
+			Expected output: "User was successfully updated!"	
+		
+		Test 5: SUCCESS: All entries updated
+			curl -X POST http://localhost:5000/users/update/1 -H "Content-Type:application/json" -d "{\"first_name\":\"Steve\",\"last_name\":\"Harrington\",\"email\":\"sharrington@gmail.com\"}"
+			Expected output: "User was successfully updated!"		
+			
+		Test 6: FAILURE: An invalid field was provided
+			curl -X POST http://localhost:5000/users/update/1 -H "Content-Type:application/json" -d "{\"value\":\"Jim\"}"
+			Expected output: "An invalid field was provided!"
+			
+		Test 7: FAILURE: An invalid value was provided for the field. (Email with no @)
+			curl -X POST http://localhost:5000/users/update/1 -H "Content-Type:application/json" -d "{\"email\":\"jbyershawkins.com\"}"
+			Expected output: "An invalid value for the specified field was provided."
+			
+		Test 8: FAILURE: An invalid value was provided for the field. (Email with no .)
+			curl -X POST http://localhost:5000/users/update/1 -H "Content-Type:application/json" -d "{\"email\":\"jbyers@hawkinscom\"}"
+			Expected output: "An invalid value for the specified field was provided."			
+			
+		Test 9: FAILURE: No value was provided
+			curl -X POST http://localhost:5000/users/update/1 -H "Content-Type:application/json" -d "{\"email\":\"\"}"
+			Expected output: "An invalid value for the specified field was provided"
+			
+		Test 10: FAILURE: An invalid field was provided
+			curl -X POST http://localhost:5000/users/update/1 -H "Content-Type:application/json" -d "{\"\":\"\"}"
+			Expected output: "An invalid field was provided!"
+		
+		Test 11: FAILURE: An invalid value anywhere in the command results in a failure and no updates made
+			curl -X POST http://localhost:5000/users/update/1 -H "Content-Type:application/json" -d "{\"first_name\":\"Lucas\",\"last_name\":\"Sinclair\",\"email\":\"lsinclairgmail.com\"}"
+			Expected output: "An invalid value for the specified field was provided."
+		
+		Test 12: FAILURE: An invalid field anywhere in the command results in a failure and no updates made
+			curl -X POST http://localhost:5000/users/update/1 -H "Content-Type:application/json" -d "{\"first_name\":\"Lucas\",\"lname\":\"Sinclair\",\"email\":\"lsinclair@gmail.com\"}"
+			Expected output: "An invalid field was provided!"			
+			
+		Test 13: FAILURE: An invalid user ID results in no updates
+			curl -X POST http://localhost:5000/users/update/17 -H "Content-Type:application/json" -d "{\"first_name\":\"Lucas\",\"last_name\":\"Sinclair\",\"email\":\"lsinclair@gmail.com\"}"
+			Expected output: "User ID provided does not match any user within the database."
+			
+		
